@@ -9,7 +9,7 @@ processes = []
   SECOND_APP_PORT = "3001"
 
 [experimental]
-  allowed_public_ports = []
+  allowed_public_ports = ["3000", "3001", "3002", "80", "443"]
   auto_rollback = true
 
 [[services]]
