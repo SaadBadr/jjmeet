@@ -17,7 +17,7 @@ processes = []
     type = "connections"
 
   [[services.ports]]
-    handlers = ["http"]
+    handlers = ["tls", "http"]
     port = 3000
 
   [[services.ports]]
@@ -38,6 +38,6 @@ processes = []
     type = "connections"
 
   [[services.ports]]
-    handlers = ["http"]
+    handlers = ["tls", "http"]
     port = 3001
 
