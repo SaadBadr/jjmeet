@@ -20,11 +20,6 @@ processes = []
     handlers = ["tls", "http"]
     port = 3000
 
-  [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 443
-
-
 [[services]]
   http_checks = []
   internal_port = 3001
