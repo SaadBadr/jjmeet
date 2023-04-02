@@ -18,7 +18,7 @@ processes = []
 
   [[services.ports]]
     handlers = ["tls", "http"]
-    port = 443
+    port = 80
     
 [[services]]
   http_checks = []
@@ -34,4 +34,4 @@ processes = []
 
   [[services.ports]]
     handlers = ["tls", "http"]
-    port = 80
+    port = 443
