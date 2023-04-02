@@ -4,6 +4,10 @@ kill_timeout = 5
 mounts = []
 processes = []
 
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
+
 [[services]]
   http_checks = []
   internal_port = 3000
@@ -18,7 +22,11 @@ processes = []
 
   [[services.ports]]
     handlers = ["tls", "http"]
-    port = 8080
+    port = 443
+  [[services.ports]]
+    force_secure = true
+    handlers = ["http"]
+    port = 80
     
 [[services]]
   http_checks = []
@@ -34,4 +42,4 @@ processes = []
 
   [[services.ports]]
     handlers = ["tls", "http"]
-    port = 443
+    port = 3001
