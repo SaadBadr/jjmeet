@@ -17,22 +17,12 @@ getUserMedia({
   );
 
   // Add Event Listeners to disable/enable Mic and Cam
-  document.getElementById("mic").addEventListener("click", function () {
-    stream
-      .getAudioTracks()
-      .forEach((track) => (track.enabled = !track.enabled));
-    this.textContent = this.textContent.includes("On")
-      ? "Turn Off Mic"
-      : "Turn On Mic";
+  document.getElementById("mic").addEventListener("change", function () {
+    stream.getAudioTracks().forEach((track) => (track.enabled = this.checked));
   });
 
-  document.getElementById("cam").addEventListener("click", function () {
-    stream
-      .getVideoTracks()
-      .forEach((track) => (track.enabled = !track.enabled));
-    this.textContent = this.textContent.includes("On")
-      ? "Turn Off Cam"
-      : "Turn On Cam";
+  document.getElementById("cam").addEventListener("change", function () {
+    stream.getVideoTracks().forEach((track) => (track.enabled = this.checked));
   });
 
   addVideoStream(myVideo, stream);
