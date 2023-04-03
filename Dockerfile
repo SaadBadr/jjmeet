@@ -3,7 +3,7 @@ FROM node:18.14.1
 EXPOSE 3000
 EXPOSE 3001
 
-RUN npm i -g peer && npm i -g concurrently
+RUN npm i -g peer
 
 WORKDIR /home/node/app
 
@@ -19,4 +19,6 @@ RUN npm ci && npm cache clean --force
 COPY ./ .
 
 
-ENTRYPOINT ["npx","concurrently","peerjs -p 3001","node server.js"]
+COPY runner.sh /scripts/runner.sh
+
+ENTRYPOINT ["/scripts/runner.sh"]
