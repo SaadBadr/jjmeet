@@ -1,4 +1,3 @@
-const peer_port = "443"; // change this to 3001 in local testing!
 const socket = io("/");
 
 const videoGrid = document.getElementById("video-grid");
@@ -6,49 +5,45 @@ const myVideo = document.createElement("video");
 myVideo.muted = true;
 const peers = {};
 
-const getUserMedia = navigator.mediaDevices.getUserMedia;
-
-getUserMedia({
-  video: true,
-  audio: true,
-}).then(function (stream) {
+socket.on("connected", async function (peer_port, peer_path) {
+  const getUserMedia = navigator.mediaDevices.getUserMedia;
+  const stream = await getUserMedia({
+    video: true,
+    audio: true,
+  });
   // Disable Mic and Cam Initially
   [...stream.getAudioTracks(), ...stream.getVideoTracks()].forEach(
     (track) => (track.enabled = false)
   );
-
   // Add Event Listeners to disable/enable Mic and Cam
   document.getElementById("mic").addEventListener("change", function () {
-    stream.getAudioTracks().forEach((track) => (track.enabled = this.checked));
+    stream
+      .getAudioTracks()
+      .forEach((track_1) => (track_1.enabled = this.checked));
   });
-
   document.getElementById("cam").addEventListener("change", function () {
-    stream.getVideoTracks().forEach((track) => (track.enabled = this.checked));
+    stream
+      .getVideoTracks()
+      .forEach((track_2) => (track_2.enabled = this.checked));
   });
-
   addVideoStream(myVideo, stream);
-
   const peer = new Peer(undefined, {
     host: "/",
-    path: "/mypeerserver",
+    path: peer_path,
     port: peer_port,
-    secure: true,
+    secure: peer_port === "443",
   });
-
   peer.on("open", function (id) {
     socket.emit("join-room", ROOM_ID, id);
   });
-
   peer.on("call", function (call) {
-    console.log("stream", stream);
-    console.log("call", call);
     call.answer(stream);
-    const video = document.createElement("video");
+    peers[call.peer] = call;
+    const video_1 = document.createElement("video");
     call.on("stream", function (userVideoStream) {
-      addVideoStream(video, userVideoStream);
+      addVideoStream(video_1, userVideoStream);
     });
   });
-
   socket.on("user-connected", function (userId) {
     console.log("user-connected", userId);
     connectToNewUser(userId, stream, peer);
@@ -61,8 +56,6 @@ socket.on("user-disconnected", function (userId) {
 });
 
 function connectToNewUser(userId, stream, peer) {
-  console.log("call with userId", userId);
-  console.log("call with stream", stream);
   const call = peer.call(userId, stream);
   const video = document.createElement("video");
   call.on("stream", function (userVideoStream) {

@@ -18,6 +18,11 @@ app.get("/:room", (req, res) => {
 
 io.on("connection", (socket) => {
   console.log("connection...");
+  socket.emit(
+    "connected",
+    process.env.proxy_pass_peer_443 === "true" ? "443" : process.env.peer_port,
+    process.env.peer_path
+  );
   socket.on("join-room", (roomId, userId) => {
     socket.join(roomId);
     socket.to(roomId).emit("user-connected", userId);

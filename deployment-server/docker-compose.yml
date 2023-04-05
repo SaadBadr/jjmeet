@@ -3,9 +3,10 @@ services:
   jjmeet:
     container_name: "jjmeet"
     image: saadbadr23/jjmeet:latest
-    ports:
-      - "3000:3000"
-      - "3001:3001"
+    environment:
+      - proxy_pass_peer_443=true
+      - peer_port=3001
+      - peer_path=/mypeerserver
     networks:
       - my_network
 
