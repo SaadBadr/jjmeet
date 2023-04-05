@@ -29,8 +29,9 @@ getUserMedia({
 
   const peer = new Peer(undefined, {
     host: "/",
-    path: "/",
-    port: "3001",
+    path: "/mypeerserver",
+    port: "443",
+    secure: true,
   });
 
   peer.on("open", function (id) {

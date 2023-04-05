@@ -1,5 +1,5 @@
 #!/bin/bash
-peerjs -p 3001 &
+peerjs --port 3001 --path /mypeerserver &
 P1=$!
 npm run prod &
 P2=$!
