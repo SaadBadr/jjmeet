@@ -1,3 +1,4 @@
+const peer_port = "443"; // change this to 3001 in local testing!
 const socket = io("/");
 
 const videoGrid = document.getElementById("video-grid");
@@ -30,7 +31,7 @@ getUserMedia({
   const peer = new Peer(undefined, {
     host: "/",
     path: "/mypeerserver",
-    port: "443",
+    port: peer_port,
     secure: true,
   });
 
