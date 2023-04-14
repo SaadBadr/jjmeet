@@ -22,6 +22,8 @@ io.on("connection", (socket) => {
     "connected",
     process.env.proxy_pass_peer_443 === "true" ? "443" : process.env.peer_port,
     process.env.peer_path
+    // 3001,
+    // "/"
   );
   socket.on("join-room", (roomId, userId) => {
     socket.join(roomId);

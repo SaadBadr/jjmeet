@@ -26,16 +26,15 @@ socket.on("connected", async function (peer_port, peer_path) {
   });
 
   document
-    .getElementById("noise-reduction")
+    .getElementById("noise-filter")
     .addEventListener("change", function () {
-      console.log("hello!");
-      stream.getAudioTracks().forEach(async (track) => {
-        console.log("before", track.getConstraints());
-        const x = await track.applyConstraints({
-          noiseSuppression: this.checked,
-        });
-        console.log("after", track.getConstraints());
-      });
+      const min = document.getElementById("frequency-min");
+      const max = document.getElementById("frequency-max");
+      min.value = 1000;
+      max.value = 2000;
+      min.disabled = !this.checked;
+      max.disabled = !this.checked;
+      replaceNoiseReducedTracksForPeers(stream, peers, this.checked);
     });
 
   addVideoStream(myVideo, stream);
@@ -55,6 +54,12 @@ socket.on("connected", async function (peer_port, peer_path) {
     call.on("stream", function (userVideoStream) {
       addVideoStream(video_1, userVideoStream);
     });
+    if (document.getElementById("noise-filter").checked)
+      replaceNoiseReducedTracksForPeers(
+        stream,
+        { [`${call.peer}`]: call },
+        true
+      );
   });
   socket.on("user-connected", function (userId) {
     console.log("user-connected", userId);
@@ -78,6 +83,8 @@ function connectToNewUser(userId, stream, peer) {
   });
 
   peers[userId] = call;
+  if (document.getElementById("noise-filter").checked)
+    replaceNoiseReducedTracksForPeers(stream, { [`${call.peer}`]: call }, true);
 }
 
 function addVideoStream(video, stream) {
@@ -86,4 +93,72 @@ function addVideoStream(video, stream) {
     video.play();
   });
   videoGrid.append(video);
+}
+
+let biquad = null;
+document.getElementById("frequency-min").addEventListener("input", function () {
+  const max = parseFloat(document.getElementById("frequency-max").value);
+  const min = parseFloat(document.getElementById("frequency-min").value);
+  console.log("frequency");
+  if (biquad !== null) {
+    const { center, q } = getFilterParams();
+    biquad.frequency.value = center;
+    biquad.Q.value = q;
+    console.log("value", biquad.frequency.value, "Q", biquad.Q);
+  }
+});
+
+document.getElementById("frequency-max").addEventListener("input", function () {
+  console.log("frequency");
+  if (biquad !== null) {
+    const { center, q } = getFilterParams();
+    biquad.frequency.value = center;
+    biquad.Q.value = q;
+    console.log("value", biquad.frequency.value, "Q", biquad.Q);
+  }
+});
+
+function getFilterParams(max, min) {
+  max = max ?? parseFloat(document.getElementById("frequency-max").value);
+  min = min ?? parseFloat(document.getElementById("frequency-min").value);
+  const center = Math.sqrt(max * min);
+  const q = center / (max - min);
+  return { center, q };
+}
+
+function noiseSuppression(stream) {
+  try {
+    const ctx = new AudioContext();
+    const src = ctx.createMediaStreamSource(stream);
+    const dst = ctx.createMediaStreamDestination();
+    biquad = ctx.createBiquadFilter();
+    [src, biquad, dst].reduce((a, b) => a && a.connect(b));
+    biquad.type = "bandpass";
+    const { center, q } = getFilterParams();
+    biquad.frequency.value = center;
+    biquad.Q.value = q;
+    return dst.stream;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function replaceNoiseReducedTracksForPeers(
+  stream,
+  my_peers = peers,
+  filter = true
+) {
+  if (filter) {
+    Object.values(my_peers).forEach((call) => {
+      call?.peerConnection
+        ?.getSenders()[0]
+        ?.replaceTrack(noiseSuppression(stream).getAudioTracks()[0]);
+    });
+  } else {
+    Object.values(my_peers).forEach((call) => {
+      call?.peerConnection
+        ?.getSenders()[0]
+        ?.replaceTrack(stream.getAudioTracks()[0]);
+    });
+  }
 }

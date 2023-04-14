@@ -26,6 +26,21 @@ h1 {
   font-size: 500%;
 }
 
+.frequency-numeric-input {
+  width: 37px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 /* The switch - the box around the slider */
 .switch {
   position: relative;

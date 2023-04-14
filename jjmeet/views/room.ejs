@@ -36,8 +36,43 @@
       <label class="switch"> Cam </label>
     </div>
     <div>
-      <label for="noise-reduction">Noise Reduction</label>
-      <input id="noise-reduction" name="noise-reduction" type="checkbox" />
+      <label>
+        <span title="Apply Bandpass filter">Noise Filter</span>
+        <input
+          title="Apply Bandpass filter"
+          id="noise-filter"
+          name="noise-filter"
+          type="checkbox"
+        />
+      </label>
+      &#183;
+      <label>
+        <span> F<sub>min</sub></span>
+        <input
+          id="frequency-min"
+          class="frequency-numeric-input"
+          type="number"
+          min="0"
+          max="10000"
+          value="1000"
+          disabled
+        />
+        Hz
+      </label>
+      &#183;
+      <label>
+        <span> F<sub>max</sub></span>
+        <input
+          id="frequency-max"
+          class="frequency-numeric-input"
+          type="number"
+          min="0"
+          max="10000"
+          value="2000"
+          disabled
+        />
+        Hz
+      </label>
     </div>
     <div id="video-grid"></div>
   </body>
