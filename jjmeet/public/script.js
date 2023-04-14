@@ -5,6 +5,10 @@ const myVideo = document.createElement("video");
 myVideo.muted = true;
 const peers = {};
 
+socket.on("disconnect", function () {
+  location.reload();
+});
+
 socket.on("connected", async function (peer_port, peer_path) {
   const getUserMedia = navigator.mediaDevices.getUserMedia;
   const stream = await getUserMedia({
@@ -12,20 +16,28 @@ socket.on("connected", async function (peer_port, peer_path) {
     audio: true,
   });
   // Disable Mic and Cam Initially
-  [...stream.getAudioTracks(), ...stream.getVideoTracks()].forEach(
-    (track) => (track.enabled = false)
-  );
+  stream.getTracks().forEach((track) => (track.enabled = false));
   // Add Event Listeners to disable/enable Mic and Cam
   document.getElementById("mic").addEventListener("change", function () {
-    stream
-      .getAudioTracks()
-      .forEach((track_1) => (track_1.enabled = this.checked));
+    stream.getAudioTracks().forEach((track) => (track.enabled = this.checked));
   });
   document.getElementById("cam").addEventListener("change", function () {
-    stream
-      .getVideoTracks()
-      .forEach((track_2) => (track_2.enabled = this.checked));
+    stream.getVideoTracks().forEach((track) => (track.enabled = this.checked));
   });
+
+  document
+    .getElementById("noise-reduction")
+    .addEventListener("change", function () {
+      console.log("hello!");
+      stream.getAudioTracks().forEach(async (track) => {
+        console.log("before", track.getConstraints());
+        const x = await track.applyConstraints({
+          noiseSuppression: this.checked,
+        });
+        console.log("after", track.getConstraints());
+      });
+    });
+
   addVideoStream(myVideo, stream);
   const peer = new Peer(undefined, {
     host: "/",

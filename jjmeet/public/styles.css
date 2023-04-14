@@ -15,6 +15,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, 300px);
   grid-auto-rows: 300px;
+  margin-top: 20px;
 }
 video {
   width: 100%;
