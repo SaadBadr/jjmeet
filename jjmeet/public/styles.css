@@ -21,6 +21,11 @@ video {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /*Mirror code starts*/
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg); /* Safari and Chrome */
+  -moz-transform: rotateY(180deg); /* Firefox */
+  /*Mirror code ends*/
 }
 h1 {
   font-size: 500%;
